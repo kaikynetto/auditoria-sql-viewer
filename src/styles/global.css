@@ -1,0 +1,28 @@
+/* styles/global.css */
+body {
+  font-family: Arial, sans-serif;
+}
+
+* {
+  transition: all 2s ease;
+  box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #292929;
+    --secondary-color: #a1a1a1;
+    --third-color: #00dc8c;
+    --third-color2: #06ac6f;
+    --text-color: white;
+}
+
+h1 {
+  color: #333;
+  font-size: 2rem;
+}
+
+html, body, #__next {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
