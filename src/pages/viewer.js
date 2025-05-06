@@ -15,6 +15,7 @@ export default function Viewer() {
   const [sortOrder, setSortOrder] = useState('desc')
   const [isClient, setIsClient] = useState(false)
   const pageSize = 50
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setIsClient(true)
@@ -24,8 +25,10 @@ export default function Viewer() {
         if (!response.ok) throw new Error('Erro ao buscar dados')
         const data = await response.json()
         setData(data)
+        setLoading(false)
       } catch (error) {
         console.error('Erro ao buscar dados do banco:', error)
+        setLoading(false)
       }
     }
     fetchData()
@@ -97,7 +100,6 @@ export default function Viewer() {
   return (
     <ViewerBackground>
       <FilterArea>
-        
         <label>
           Ordenar por data:
           <select value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
@@ -152,31 +154,40 @@ export default function Viewer() {
       </FilterArea>
 
       <TableContainer>
-        <StyledTable {...getTableProps()}>
-          <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <Th {...column.getHeaderProps()}>{column.render('Header')}</Th>
+        {loading ? (
+          <LoadingContainer>
+            <div className="spinner"></div>
+            <p>Carregando...</p>
+          </LoadingContainer>
+        ) : (
+          <>
+            <StyledTable {...getTableProps()}>
+              <thead>
+                {headerGroups.map(headerGroup => (
+                  <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <Th key={column.id} {...column.getHeaderProps()}>{column.render('Header')}</Th>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
-              prepareRow(row)
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map(cell => (
-                    <Td {...cell.getCellProps()}>{cell.render('Cell')}</Td>
-                  ))}
-                </tr>
-              )
-            })}
-          </tbody>
-        </StyledTable>
-        {visibleRows < filteredData.length && (
-          <LoadMoreButton onClick={loadMore}>Carregar mais</LoadMoreButton>
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {rows.map(row => {
+                  prepareRow(row)
+                  return (
+                    <tr key={row.id} {...row.getRowProps()}>
+                      {row.cells.map(cell => (
+                        <Td key={cell.column.id} {...cell.getCellProps()}>{cell.render('Cell')}</Td>
+                      ))}
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </StyledTable>
+            {visibleRows < filteredData.length && (
+              <LoadMoreButton onClick={loadMore}>Carregar mais</LoadMoreButton>
+            )}
+          </>
         )}
       </TableContainer>
     </ViewerBackground>
@@ -212,7 +223,7 @@ const FilterArea = styled.div`
 `
 
 const TableContainer = styled.div`
-  max-height: 70vh;
+  max-height: 80vh;
   overflow-y: auto;
   border: 1px solid #444;
   border-radius: 12px;
@@ -250,5 +261,30 @@ const LoadMoreButton = styled.button`
   cursor: pointer;
   &:hover {
     background-color: #444;
+  }
+`
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+  .spinner {
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+  p {
+    margin-top: 10px;
+    color: #ccc;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `
