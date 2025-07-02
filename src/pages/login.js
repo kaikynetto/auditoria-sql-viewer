@@ -26,7 +26,7 @@ export default function Login() {
         password
       }
       localStorage.setItem("user_data", user_data)
-      router.push("/")
+      router.push("/viewer")
     } else {
       console.log(data)
       // alert('Login inválido');
