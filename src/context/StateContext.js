@@ -5,19 +5,18 @@ const StateContext = createContext();
 
 export const StateProvider = ({ children }) => {
   const [userData, setUserData] = useState([]);
-
   const router = useRouter();
 
   useEffect(() => {
     const user_data = localStorage.getItem("user_data");
 
     if (user_data == null) {
-      router.push("/login");
+      router.replace("/login"); 
     } else {
-      router.push("/viewer");
+      router.replace("/viewer"); 
       setUserData(user_data);
     }
-  }, [router]);
+  }, []);   
 
   return (
     <StateContext.Provider value={{ userData, setUserData }}> 
