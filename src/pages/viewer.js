@@ -34,6 +34,10 @@ export default function Viewer() {
     fetchData()
   }, [])
 
+  useEffect(() => {
+    setVisibleRows(pageSize)
+  }, [startDate, endDate, minBuyIn, maxBuyIn, networkFilter, speedFilter, playerFilter, sortOrder])
+
   const columns = useMemo(
     () => [
       { Header: 'Date', accessor: 'report_date' },
